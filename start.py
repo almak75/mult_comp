@@ -31,7 +31,7 @@ def cls():
     os.system('cls' if os.name=='nt' else 'clear')
 
 #cls()
-print('НОВАЯ   СЕССИЯ 6')
+print('НОВАЯ     СЕССИЯ 6')
 #тут у них какой то косяк, кэш не работает. Пришлось лепить костыль, чтобы за именем обращался в кэш только один раз за сессию
 #@st.cache(allow_output_mutation=True)
 #@st.cache_resource
