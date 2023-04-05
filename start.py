@@ -1,6 +1,4 @@
 
-#from base64 import b16decode
-#from re import X
 import streamlit as st
 import random
 
@@ -20,6 +18,14 @@ LOG_COMP = 'log_comp.txt'   #лог для ведения статистики �
 LOG_TRAIN = 'log_train.txt'   #лог для ведения статистики по обучению
 ALL_MISTAKES = 'all_mistakes.txt'  #здесь будем хранить все ошибки
 
+#@st.cache_data
+def load_class():
+    with open('2b.txt', 'r',encoding='utf8') as f:
+        pupils = f.readlines()#список учеников
+    pupils=[p.replace('\n','') for p in pupils]
+    tmp = ['Выберите..']
+    tmp.extend(pupils)
+    return tmp
 
 def cls():
     os.system('cls' if os.name=='nt' else 'clear')
@@ -39,12 +45,25 @@ if 'current_user' not in st.session_state:
         st.session_state.current_user = remember_fio
         #print('Вспоминаем на старте', remember_fio)
 
-def set_cookies(): #записываем в куки текущего юзера
+
+def set_cookies(key): #записываем в куки текущего юзера
+    #print(key)
+    #key = key[0]
     #cookie_manager = get_manager()
     cookie_manager = get_manager()
-    st.session_state.current_user = st.session_state.pupil
-    cookie_manager.set(COOKI_NAME, st.session_state.pupil, expires_at=datetime.datetime(year=2023, month=7, day=7))
+    print(st.session_state[key])
+    st.session_state.current_user = st.session_state[key]
+    cookie_manager.set(COOKI_NAME, st.session_state[key], expires_at=datetime.datetime(year=2023, month=7, day=7))
     
+if ('current_user' not in st.session_state) or (st.session_state.current_user=='Выберите..'): #
+    pos = 0
+    pupils = load_class()
+    #print(st.session_state)
+    st.header('Таблица умножения. Чемпионат 2В.')
+    pupil2 = st.selectbox(':blue[Участник:]', pupils, index = pos, on_change=set_cookies, args =['pupil2'], key='pupil2')
+    
+    st.stop()
+
 
 
 
@@ -68,7 +87,7 @@ if 'stat' in st.session_state and st.session_state.stat['type'] == 'comp':
 elif 'stat' in st.session_state and st.session_state.stat['type'] == 'train':
     st.header('Таблица умножения. Обучение.')
 else:
-    st.header('Таблица умножения.')
+    st.header('Таблица умножения. Чемпионат 2В.')
 
 ##MainMenu {visibility: hidden;}
 #footer {visibility: hidden;}
@@ -91,14 +110,7 @@ div.stButton > button:hover {
 
 </style>""", unsafe_allow_html=True)
 
-@st.cache_data
-def load_class():
-    with open('2b.txt', 'r',encoding='utf8') as f:
-        pupils = f.readlines()#список учеников
-    pupils=[p.replace('\n','') for p in pupils]
-    tmp = ['Выберите..']
-    tmp.extend(pupils)
-    return tmp
+
 
 
 
@@ -311,7 +323,7 @@ with st.expander("НАСТРОЙКИ"):
         #print('Взято с неба', st.session_state.pupil)
         pos = pupils.index(st.session_state.pupil)
 
-    pupil = st.selectbox(':blue[ФИО ученика]', pupils, index = pos, on_change=set_cookies,key='pupil')
+    pupil = st.selectbox(':blue[ФИО ученика]', pupils, index = pos, on_change=set_cookies,args =['pupil'], key='pupil')
     
     st.write(':blue[Выберите на сколько будем умножать:]')
 
@@ -471,8 +483,8 @@ else:
                    
 
             else: #кнопки
-                 candidat = [otv-1,otv-2, otv-3,otv+1,otv+2, otv+3]
-                 candidat = random.sample(candidat, 3)
+                 #candidat = [otv-1,otv-2, otv-3,otv+1,otv+2, otv+3]
+                 candidat = random.sample([otv-1,otv-2, otv-3,otv+1,otv+2, otv+3], 3)
                  candidat.append(otv)
                  random.shuffle(candidat)
                  ##st.session_state.last=0
@@ -480,15 +492,11 @@ else:
                  with st.form(key='qwe2'):
                     st.title(q)
                     st.write('Нажмите кнопку с ответом')
-                    column1, column2, column3, column4 = st.columns(4)
-                    with column1:  
-                        otv0 = st.form_submit_button(use_container_width=True, label = str(candidat[0]), on_click=click_b, args=(q, otv, candidat[0]))
-                    with column2:  
-                        otv1 = st.form_submit_button(use_container_width=True, label = str(candidat[1]), on_click=click_b, args=(q, otv, candidat[1]))
-                    with column3:  
-                        otv2 = st.form_submit_button(use_container_width=True, label = str(candidat[2]), on_click=click_b, args=(q, otv, candidat[2]))
-                    with column4:  
-                        otv3 = st.form_submit_button(use_container_width=True, label = str(candidat[3]), on_click=click_b, args=(q, otv, candidat[3]))
+                    #выводим кнопки
+                    col = st.columns(4)
+                    for i in  range(4):
+                        with col[i]:
+                            st.form_submit_button(use_container_width=True, label = str(candidat[i]), on_click=click_b, args=(q, otv, candidat[i]))
         else:#вопросы закончились, подводим итоги
            
             
@@ -534,21 +542,35 @@ else:
             #РЕЗУЛЬТАТЫ ТЕСТА НА СОРЕВНОВАНИЕ    
             if (st.session_state.stat['type'] == 'comp') and (pupil!='Выберите..') : #у нас тест на соревнование. Надо записать итоги
                 tmp_dict=st.session_state.stat
+
+                re_write_file = 0 #надо ли перезаписать файл, перезапись только в случае изменений происходит
                 wrong_answer = ', '.join(tmp_dict['wrong_answer'])
                 if os.path.isfile(RATING_FILE):
                     with open(RATING_FILE, 'rb') as file:
                         rating = pickle.load(file)
-                else:
+                else: #файла нет, делаем пустую таблицу, видимо первый участник
                     rating = pd.DataFrame({'ФИО':[], 'Правильно':[],'Ошибок':[],'Время (сек.)':[],'Дата':[] }).set_index('ФИО')
-                if  pupil in rating.index:
-                    if (rating.at[pupil, 'Ошибок'] > tmp_dict['wrong']) or ((rating.at[pupil, 'Ошибок'] == tmp_dict['wrong']) and (rating.at[pupil, 'Время (сек.)'] > t)):
+                
+                if  pupil in rating.index: #если он у нас уже в таблице, смотрим улучшил ли он результат
+                    if (rating.at[pupil, 'Ошибок'] > tmp_dict['wrong']) or ((rating.at[pupil, 'Ошибок'] == tmp_dict['wrong']) and (rating.at[pupil, 'Время (сек.)'] > t)): #улучшил результат
+                        re_write_file = 1
                         rating.loc[pupil, ['Правильно', 'Ошибок', 'Время (сек.)', 'Дата']] = [RATING_N - tmp_dict['wrong'], tmp_dict['wrong'], t, datetime.datetime.now().strftime('%d.%m.%Y') ]
-                else:
+                else: #первый раз попал в рейтинг, до этого его не было
+                    re_write_file = 1
                     new_row = {'Правильно':RATING_N - tmp_dict['wrong'],'Ошибок':tmp_dict['wrong'],'Время (сек.)':t, 'Дата': datetime.datetime.now().strftime('%d.%m.%Y')}
                     #rating = rating.append(pd.DataFrame(new_row, index=[pupil]))
                     rating = pd.concat([rating, pd.DataFrame(new_row, index=[pupil])])
-                with open(RATING_FILE, 'wb') as handle:
-                    pickle.dump(rating, handle, protocol=pickle.HIGHEST_PROTOCOL)
+                if re_write_file: #далее делаем только если были изменения в таблице
+                    rating.sort_values(['Ошибок','Время (сек.)'],ascending=[True, True], inplace =True)
+                    if "Место" in rating.columns:
+                        rating['Место'] = range(1,rating.shape[0]+1)
+                    else:
+                        rating.insert(0, "Место", range(1,rating.shape[0]+1))
+                    with open(RATING_FILE, 'wb') as handle:
+                        pickle.dump(rating, handle, protocol=pickle.HIGHEST_PROTOCOL)
+                
+                    
+                    
                 with open(LOG_COMP, 'a', encoding='utf8') as handle:
                     #фио, правильно, не правильно, секунд, дата, 1 попытка
                     handle.write(f'{pupil};{RATING_N - tmp_dict["wrong"]};{tmp_dict["wrong"]};{t};{datetime.datetime.now()};1\n')
@@ -582,20 +604,37 @@ with st.expander("РЕЗУЛЬТАТЫ ОБУЧЕНИЯ"):
 
 
 with st.expander("РЕЗУЛЬТАТЫ СОРЕВНОВАНИЙ"):
+    #чтобы не читать файл каждый раз, смотрим на дату его изменения, читаем только если дата изменилась
+    
     if os.path.isfile(RATING_FILE):
-
-        with open(RATING_FILE, 'rb') as file:
-      
-        
-            rating = pickle.load(file)
-        rating.sort_values(['Ошибок','Время (сек.)'],ascending=[True, True], inplace =True)
-        #rating['Место'] = range(1,rating.shape[0]+1)
-        rating.insert(0, "Место", range(1,rating.shape[0]+1))
+        last_modify = os.path.getmtime(RATING_FILE)
+        if  (not 'last_modify_rating_file' in st.session_state) or (st.session_state.last_modify_rating_file !=last_modify):
+           with open(RATING_FILE, 'rb') as file: 
+                #print('Читаем рейтинг')
+                rating = pickle.load(file)
+                st.session_state.last_modify_rating_file =last_modify #сохраняем, чтобы не читать
+                st.session_state.last_rating_file = rating            #сохраняем, чтобы не читать
+        else:
+            #print('не Читаем рейтинг')
+            rating = st.session_state.last_rating_file
+        #rating.sort_values(['Ошибок','Время (сек.)'],ascending=[True, True], inplace =True)
+        ##rating['Место'] = range(1,rating.shape[0]+1)
+        #rating.insert(0, "Место", range(1,rating.shape[0]+1))
         st.dataframe(rating)
         st.caption('В таблице лучший результат за все попытки участия в соревновании.')
 
     else:
         st.write('Результатов пока нет')
+
+with st.expander("ПРИЗ"):
+     c1, c2 = st.columns(2)
+     with c1:
+        st.write('Побеждает участник по результатам соревнований с наименьшим количеством ошибок. В случае, если таких участников несколько, победитель тот, кто выполнил тест быстрее.')
+        st.write('Срок проведения чемпионата: с 5 апреля до 24.00 часов 30 апреля 2023 года.')
+     with c2:
+        st.image('pi.jpg', use_column_width = True, caption='Приз за 1 место: большая пицца "4 сыра".')
+    
+
 
 with st.expander("Инструкция для родителей"):
     st.write('Программа не претендует на красоту, анимацию, развлечение.')
