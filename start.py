@@ -10,7 +10,7 @@ import datetime
 import extra_streamlit_components as stx
 
 st.set_page_config(page_title='Таблица умножения')
-print('НОВАЯ СЕССИЯ  11')
+print('НОВАЯ СЕССИЯ  12')
 
 RATING_FILE = 'comp.txt'    #здесь будем хранить данные с рейтингом
 RATING_N = 30                #КОЛИЧЕСТВО ПРИМЕРОВ В РЕЙТИНОГОВОМ ТЕСТЕ
