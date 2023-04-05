@@ -9,8 +9,9 @@ import pickle
 import datetime
 import extra_streamlit_components as stx
 
-
 st.set_page_config(page_title='Таблица умножения')
+print('НОВАЯ СЕССИЯ 10')
+
 RATING_FILE = 'comp.txt'    #здесь будем хранить данные с рейтингом
 RATING_N = 30                #КОЛИЧЕСТВО ПРИМЕРОВ В РЕЙТИНОГОВОМ ТЕСТЕ
 COOKI_NAME = 'pupil'
@@ -31,7 +32,7 @@ def cls():
     os.system('cls' if os.name=='nt' else 'clear')
 
 #cls()
-print('НОВАЯ СЕССИЯ 6')
+
 #тут у них какой то косяк, кэш не работает. Пришлось лепить костыль, чтобы за именем обращался в кэш только один раз за сессию
 #@st.cache(allow_output_mutation=True)
 #@st.cache_resource
