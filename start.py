@@ -10,7 +10,7 @@ import datetime
 import extra_streamlit_components as stx
 
 st.set_page_config(page_title='Таблица умножения')
-print('НОВАЯ СЕССИЯ  12')
+#print('НОВАЯ СЕССИЯ  12')
 
 RATING_FILE = 'comp.txt'    #здесь будем хранить данные с рейтингом
 RATING_N = 30                #КОЛИЧЕСТВО ПРИМЕРОВ В РЕЙТИНОГОВОМ ТЕСТЕ
@@ -52,7 +52,7 @@ def set_cookies(key): #записываем в куки текущего юзе�
     #key = key[0]
     #cookie_manager = get_manager()
     cookie_manager = get_manager()
-    print(st.session_state[key])
+    #print(st.session_state[key])
     st.session_state.current_user = st.session_state[key]
     cookie_manager.set(COOKI_NAME, st.session_state[key], expires_at=datetime.datetime(year=2023, month=7, day=7))
     
