@@ -11,7 +11,7 @@ import datetime
 import extra_streamlit_components as stx
 st.set_page_config(page_title='Таблица умножения')
 
-
+import cv2
 try:
  import cv2
  print('Поставилось')
