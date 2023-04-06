@@ -8,9 +8,10 @@ import os
 import pickle
 import datetime
 import extra_streamlit_components as stx
-
+#import cv2
 
 st.set_page_config(page_title='Таблица умножения')
+
 RATING_FILE = 'comp.txt'    #здесь будем хранить данные с рейтингом
 RATING_N = 30                #КОЛИЧЕСТВО ПРИМЕРОВ В РЕЙТИНОГОВОМ ТЕСТЕ
 COOKI_NAME = 'pupil'
@@ -18,6 +19,28 @@ LOG_COMP = 'log_comp.txt'   #лог для ведения статистики �
 LOG_TRAIN = 'log_train.txt'   #лог для ведения статистики по обучению
 ALL_MISTAKES = 'all_mistakes.txt'  #здесь будем хранить все ошибки
 NOT_SAVE_RESULTS = ['Тестовый Тест', 'Выберите..', 'Гость'] #эти результаты не надо сохранять в рейтинги
+
+#@st.cache_data
+def transliterate(name):
+    slovar = {'а':'a','б':'b','в':'v','г':'g','д':'d','е':'e','ё':'yo',
+      'ж':'zh','з':'z','и':'i','й':'i','к':'k','л':'l','м':'m','н':'n',
+      'о':'o','п':'p','р':'r','с':'s','т':'t','у':'u','ф':'f','х':'h',
+      'ц':'c','ч':'ch','ш':'sh','щ':'sch','ъ':'','ы':'y','ь':'','э':'e',
+      'ю':'u','я':'ya', 'А':'A','Б':'B','В':'V','Г':'G','Д':'D','Е':'E','Ё':'YO',
+      'Ж':'ZH','З':'Z','И':'I','Й':'I','К':'K','Л':'L','М':'M','Н':'N',
+      'О':'O','П':'P','Р':'R','С':'S','Т':'T','У':'U','Ф':'F','Х':'H',
+      'Ц':'C','Ч':'CH','Ш':'SH','Щ':'SCH','Ъ':'','Ы':'y','Ь':'','Э':'E',
+      'Ю':'U','Я':'YA',',':'','?':'',' ':'_','~':'','!':'','@':'','#':'',
+      '$':'','%':'','^':'','&':'','*':'','(':'',')':'','-':'','=':'','+':'',
+      ':':'',';':'','<':'','>':'','\'':'','"':'','\\':'','/':'','№':'',
+      '[':'',']':'','{':'','}':'','ґ':'','ї':'', 'є':'','Ґ':'g','Ї':'i',
+      'Є':'e', '—':''}
+        
+    name = ''.join([slovar.get(ch,'') for ch in name])
+    return name
+
+
+
 
 #@st.cache_data
 def load_class():
@@ -555,10 +578,10 @@ else:
                 if  pupil in rating.index: #если он у нас уже в таблице, смотрим улучшил ли он результат
                     if (rating.at[pupil, 'Ошибок'] > tmp_dict['wrong']) or ((rating.at[pupil, 'Ошибок'] == tmp_dict['wrong']) and (rating.at[pupil, 'Время (сек.)'] > t)): #улучшил результат
                         re_write_file = 1
-                        rating.loc[pupil, ['Правильно', 'Ошибок', 'Время (сек.)', 'Дата']] = [RATING_N - tmp_dict['wrong'], tmp_dict['wrong'], t, datetime.datetime.now().strftime('%d.%m.%Y') ]
+                        rating.loc[pupil, ['Правильно', 'Ошибок', 'Время (сек.)', 'Дата']] = [RATING_N - tmp_dict['wrong'], tmp_dict['wrong'], t, datetime.datetime.now().strftime('%d.%m.%Y %H:%M') ]
                 else: #первый раз попал в рейтинг, до этого его не было
                     re_write_file = 1
-                    new_row = {'Правильно':RATING_N - tmp_dict['wrong'],'Ошибок':tmp_dict['wrong'],'Время (сек.)':t, 'Дата': datetime.datetime.now().strftime('%d.%m.%Y')}
+                    new_row = {'Правильно':RATING_N - tmp_dict['wrong'],'Ошибок':tmp_dict['wrong'],'Время (сек.)':t, 'Дата': datetime.datetime.now().strftime('%d.%m.%Y %H:%M')}
                     #rating = rating.append(pd.DataFrame(new_row, index=[pupil]))
                     rating = pd.concat([rating, pd.DataFrame(new_row, index=[pupil])])
                 if re_write_file: #далее делаем только если были изменения в таблице
@@ -569,7 +592,18 @@ else:
                         rating.insert(0, "Место", range(1,rating.shape[0]+1))
                     with open(RATING_FILE, 'wb') as handle:
                         pickle.dump(rating, handle, protocol=pickle.HIGHEST_PROTOCOL)
-                
+
+                    #ФОТОФИНИШ
+                    #try:
+                    #    cam = cv2.VideoCapture(0)
+                    #    ret, frame = cam.read()
+                    #    if not os.path.isdir('arh'):
+                    #        os.mkdir('arh')
+                    #    now = datetime.datetime.now().strftime('%d_%m_%Y__%H_%M')
+                    #    isWritten  = cv2.imwrite(f'arh/{transliterate(pupil)}_{now}.jpg',frame)
+                    #    del cam
+                    #except:
+                    #    pass
                     
                 if (not pupil in NOT_SAVE_RESULTS):    
                     with open(LOG_COMP, 'a', encoding='utf8') as handle:
