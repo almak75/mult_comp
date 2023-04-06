@@ -1,4 +1,4 @@
-st.set_page_config(page_title='Таблица умножения')
+
 
 import streamlit as st
 import random
@@ -9,6 +9,9 @@ import os
 import pickle
 import datetime
 import extra_streamlit_components as stx
+st.set_page_config(page_title='Таблица умножения')
+
+
 try:
  import cv2
  print('Поставилось')
