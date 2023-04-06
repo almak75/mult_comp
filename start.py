@@ -1,3 +1,4 @@
+st.set_page_config(page_title='Таблица умножения')
 
 import streamlit as st
 import random
@@ -14,7 +15,7 @@ try:
 except:
     print('не поставилось')
 
-st.set_page_config(page_title='Таблица умножения')
+
 
 RATING_FILE = 'comp.txt'    #здесь будем хранить данные с рейтингом
 RATING_N = 30                #КОЛИЧЕСТВО ПРИМЕРОВ В РЕЙТИНОГОВОМ ТЕСТЕ
