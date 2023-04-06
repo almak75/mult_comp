@@ -9,15 +9,15 @@ import pickle
 import datetime
 import extra_streamlit_components as stx
 
-st.set_page_config(page_title='Таблица умножения')
-# print('НОВАЯ СЕССИЯ  12')
 
+st.set_page_config(page_title='Таблица умножения')
 RATING_FILE = 'comp.txt'    #здесь будем хранить данные с рейтингом
 RATING_N = 30                #КОЛИЧЕСТВО ПРИМЕРОВ В РЕЙТИНОГОВОМ ТЕСТЕ
 COOKI_NAME = 'pupil'
 LOG_COMP = 'log_comp.txt'   #лог для ведения статистики по соревнованиям
 LOG_TRAIN = 'log_train.txt'   #лог для ведения статистики по обучению
 ALL_MISTAKES = 'all_mistakes.txt'  #здесь будем хранить все ошибки
+NOT_SAVE_RESULTS = ['Тестовый Тест', 'Выберите..'] #эти результаты не надо сохранять в рейтинги
 
 #@st.cache_data
 def load_class():
@@ -32,7 +32,7 @@ def cls():
     os.system('cls' if os.name=='nt' else 'clear')
 
 #cls()
-
+#print('НОВАЯ СЕССИЯ 6')
 #тут у них какой то косяк, кэш не работает. Пришлось лепить костыль, чтобы за именем обращался в кэш только один раз за сессию
 #@st.cache(allow_output_mutation=True)
 #@st.cache_resource
@@ -52,7 +52,7 @@ def set_cookies(key): #записываем в куки текущего юзе�
     #key = key[0]
     #cookie_manager = get_manager()
     cookie_manager = get_manager()
-    #print(st.session_state[key])
+    print(st.session_state[key])
     st.session_state.current_user = st.session_state[key]
     cookie_manager.set(COOKI_NAME, st.session_state[key], expires_at=datetime.datetime(year=2023, month=7, day=7))
     
@@ -62,7 +62,7 @@ if ('current_user' not in st.session_state) or (st.session_state.current_user=='
     #print(st.session_state)
     st.header('Таблица умножения. Чемпионат 2В.')
     pupil2 = st.selectbox(':blue[Участник:]', pupils, index = pos, on_change=set_cookies, args =['pupil2'], key='pupil2')
-    
+    st.write('Вам только посмотреть? Выберите пользователя с именем "Гость"')
     st.stop()
 
 
@@ -310,7 +310,7 @@ def comp_test(*current_parameters): #ЭТО ТЕСТ, КОТОРЫЙ ГЕНЕР�
 
 
 
-with st.expander("НАСТРОЙКИ"):
+with st.expander("НАСТРОЙКИ ОБУЧЕНИЯ"):
     st.text('При изменении настроек теста, текущий тест будет прерван.')
     pos = 0
     pupils = load_class()
@@ -541,7 +541,7 @@ else:
 
             
             #РЕЗУЛЬТАТЫ ТЕСТА НА СОРЕВНОВАНИЕ    
-            if (st.session_state.stat['type'] == 'comp') and (pupil!='Выберите..') : #у нас тест на соревнование. Надо записать итоги
+            if (st.session_state.stat['type'] == 'comp') and (not pupil in NOT_SAVE_RESULTS) : #у нас тест на соревнование. Надо записать итоги
                 tmp_dict=st.session_state.stat
 
                 re_write_file = 0 #надо ли перезаписать файл, перезапись только в случае изменений происходит
@@ -571,14 +571,15 @@ else:
                         pickle.dump(rating, handle, protocol=pickle.HIGHEST_PROTOCOL)
                 
                     
-                    
-                with open(LOG_COMP, 'a', encoding='utf8') as handle:
+                if (not pupil in NOT_SAVE_RESULTS):    
+                    with open(LOG_COMP, 'a', encoding='utf8') as handle:
                     #фио, правильно, не правильно, секунд, дата, 1 попытка
-                    handle.write(f'{pupil};{RATING_N - tmp_dict["wrong"]};{tmp_dict["wrong"]};{t};{datetime.datetime.now()};1\n')
-                if wrong_answer: #если есть ошибки, тоже их сохраним в файл
-                    with open(ALL_MISTAKES, 'a', encoding='utf8') as handle:
-                        wrong_answer = wrong_answer.replace(',','\n')
-                        handle.write(f'{wrong_answer}\n')
+                        handle.write(f'{pupil};{RATING_N - tmp_dict["wrong"]};{tmp_dict["wrong"]};{t};{datetime.datetime.now()};1\n')
+                if (not pupil in NOT_SAVE_RESULTS):    
+                    if wrong_answer: #если есть ошибки, тоже их сохраним в файл
+                        with open(ALL_MISTAKES, 'a', encoding='utf8') as handle:
+                            wrong_answer = wrong_answer.replace(',','\n')
+                            handle.write(f'{wrong_answer}\n')
 
 
 
@@ -638,8 +639,7 @@ with st.expander("ПРИЗ"):
 
 
 with st.expander("Инструкция для родителей"):
-    st.write('Программа не претендует на красоту, анимацию, развлечение.')
-    st.write('Возможности смотрите в видео ролике.')
+   
     st.write('Вопросы, отзывы и пожелания отправляйте в telegram:  @makarov75')
     st.video('https://youtu.be/pt51aVIDpFA')
 if 'current_user'  in st.session_state:
