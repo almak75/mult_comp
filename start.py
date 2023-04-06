@@ -12,6 +12,10 @@ import extra_streamlit_components as stx
 st.set_page_config(page_title='Таблица умножения')
 
 
+import sys
+
+sys.path.append('/usr/local/lib/python3.8/dist-packages')
+
 try:
  import cv2
  print('Поставилось')
