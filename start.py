@@ -18,7 +18,7 @@ try:
 #except:
     #print('не поставилось')
 except Exception:
-    traceback.print_exc()
+    print(Exception)
 
 
 RATING_FILE = 'comp.txt'    #здесь будем хранить данные с рейтингом
