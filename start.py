@@ -8,7 +8,7 @@ import os
 import pickle
 import datetime
 import extra_streamlit_components as stx
-#import cv2
+import cv2
 
 st.set_page_config(page_title='Таблица умножения')
 
@@ -594,16 +594,18 @@ else:
                         pickle.dump(rating, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
                     #ФОТОФИНИШ
-                    #try:
-                    #    cam = cv2.VideoCapture(0)
-                    #    ret, frame = cam.read()
-                    #    if not os.path.isdir('arh'):
-                    #        os.mkdir('arh')
-                    #    now = datetime.datetime.now().strftime('%d_%m_%Y__%H_%M')
-                    #    isWritten  = cv2.imwrite(f'arh/{transliterate(pupil)}_{now}.jpg',frame)
-                    #    del cam
-                    #except:
-                    #    pass
+                    if 'foto_finish' in st.session_state and st.session_state.foto_finish:
+                        print('фотофиниш')
+                        try:
+                            cam = cv2.VideoCapture(0)
+                            ret, frame = cam.read()
+                            if not os.path.isdir('arh'):
+                                os.mkdir('arh')
+                            now = datetime.datetime.now().strftime('%d_%m_%Y__%H_%M')
+                            isWritten  = cv2.imwrite(f'arh/{transliterate(pupil)}__{now}.jpg',frame)
+                            del cam
+                        except:
+                            pass
                     
                 if (not pupil in NOT_SAVE_RESULTS):    
                     with open(LOG_COMP, 'a', encoding='utf8') as handle:
@@ -678,6 +680,8 @@ with st.expander("Инструкция для родителей"):
     st.video('https://youtu.be/AmSY6_jfc4k')
 if 'current_user'  in st.session_state:
     st.caption(st.session_state.current_user)
+
+foto_finish = st.checkbox('Фотофиниш', value = False, key='foto_finish', help ='Автоматическое фото на память при улучшении участником своих результатов в соревновании.')
 #if 'stat' in st.session_state:
 #    st.write(st.session_state.stat)
 ##if 'mist' in st.session_state:
