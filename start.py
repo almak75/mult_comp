@@ -15,9 +15,10 @@ st.set_page_config(page_title='Таблица умножения')
 try:
  import cv2
  print('Поставилось')
-except:
-    print('не поставилось')
-
+#except:
+    #print('не поставилось')
+except Exception:
+    traceback.print_exc()
 
 
 RATING_FILE = 'comp.txt'    #здесь будем хранить данные с рейтингом
