@@ -641,7 +641,7 @@ with st.expander("ПРИЗ"):
 with st.expander("Инструкция для родителей"):
    
     st.write('Вопросы, отзывы и пожелания отправляйте в telegram:  @makarov75')
-    st.video('https://youtu.be/pt51aVIDpFA')
+    st.video('https://youtu.be/AmSY6_jfc4k')
 if 'current_user'  in st.session_state:
     st.caption(st.session_state.current_user)
 #if 'stat' in st.session_state:
