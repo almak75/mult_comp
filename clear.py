@@ -6,7 +6,7 @@ with open(RATING_FILE, 'rb') as file:
 print('\n\n\nДо удаления')
 
 print(rating)
-for i in ['Тестовый Тест', 'Выберите..']:
+for i in ['Тестовый Тест', 'Выберите..', 'Гость']:
     if i in rating.index:
         rating = rating.drop(index = i, axis = 1)
 print('\n\n\nПосле удаления')
