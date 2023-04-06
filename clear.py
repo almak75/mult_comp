@@ -10,6 +10,7 @@ for i in ['Тестовый Тест', 'Выберите..']:
     if i in rating.index:
         rating = rating.drop(index = i, axis = 1)
 print('\n\n\nПосле удаления')
+rating['Место'] = range(1,rating.shape[0]+1)
 print(rating)
 with open(RATING_FILE, 'wb') as handle:
      pickle.dump(rating, handle, protocol=pickle.HIGHEST_PROTOCOL)
