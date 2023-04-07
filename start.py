@@ -19,10 +19,8 @@ import sys
 try:
  import cv2
  print('Поставилось')
-#except:
-    #print('не поставилось')
-except Exception:
-    print(Exception)
+except:
+    print('не поставилось')
 
 
 RATING_FILE = 'comp.txt'    #здесь будем хранить данные с рейтингом
