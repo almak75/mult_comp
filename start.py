@@ -1,5 +1,4 @@
 
-
 import streamlit as st
 import random
 
@@ -9,20 +8,11 @@ import os
 import pickle
 import datetime
 import extra_streamlit_components as stx
+import streamlit.components.v1 as components
+
+import cv2
+
 st.set_page_config(page_title='Таблица умножения')
-
-
-#import sys
-
-#sys.path.append('/usr/local/lib/python3.8/dist-packages')
-#tm = sys.path
-#sys.path = list(set(sys.path))
-try:
-    import cv2
-    print('Поставилось')
-except:
-    print('не поставилось')
-
 
 RATING_FILE = 'comp.txt'    #здесь будем хранить данные с рейтингом
 RATING_N = 30                #КОЛИЧЕСТВО ПРИМЕРОВ В РЕЙТИНОГОВОМ ТЕСТЕ
@@ -31,6 +21,26 @@ LOG_COMP = 'log_comp.txt'   #лог для ведения статистики �
 LOG_TRAIN = 'log_train.txt'   #лог для ведения статистики по обучению
 ALL_MISTAKES = 'all_mistakes.txt'  #здесь будем хранить все ошибки
 NOT_SAVE_RESULTS = ['Тестовый Тест', 'Выберите..', 'Гость'] #эти результаты не надо сохранять в рейтинги
+
+
+#СУПЕР! Как менять стиль для отделььно взятого элемента
+#взято здесь https://discuss.streamlit.io/t/how-to-change-font-size-of-streamlit-radio-widget-title/35945/3
+def ChangeWidgetFontSizeS(wgt_txt, wch_font_size = '12px'):
+
+    htmlstr = """<script>var elements = window.parent.document.querySelectorAll('*'), i;
+                    for (i = 0; i < elements.length; ++i) { if (USLOVIE) 
+                        { elements[i].style.fontSize='""" + wch_font_size + """';} } </script>  """
+    usl = []
+    for el in wgt_txt:
+        new_if =f"(elements[i].innerText == '{el}')"
+        usl.append(new_if)
+        
+    usl = ' || '.join(usl)
+    htmlstr = htmlstr.replace('USLOVIE',usl)
+        
+    print(htmlstr)
+    components.html(f"{htmlstr}", height=0, width=0)
+
 
 #@st.cache_data
 def transliterate(name):
@@ -115,7 +125,9 @@ def show_buttons():
         pass #планируется тест по супер сложным примерам всего класса
     with col4:
         pass #просто для выравнивания кнопок
-
+    #ChangeWidgetFontSize('Соревнование', "18px")
+    #ChangeWidgetFontSize('Обучение', "18px")
+    ChangeWidgetFontSizeS(['Соревнование','Обучение'], "18px")
 
  #Выведем тип теста, если это соревование
 if 'stat' in st.session_state and st.session_state.stat['type'] == 'comp':
@@ -459,6 +471,7 @@ else:
                 st.title(f'Запомни: {last_example[0]} = {last_example[-2]}')
                 alert_mistake = 1 #чтобы не выводить пример
                 st.button('Дальше')
+                ChangeWidgetFontSizeS(['Дальше'], "36px")
         else: #ответ верный, надо посчитать
             st.session_state.stat['good'] +=1
 
@@ -530,9 +543,12 @@ else:
                     st.write('Нажмите кнопку с ответом')
                     #выводим кнопки
                     col = st.columns(4)
+                    candidat_str = list(map(str,candidat)) #где то нужен инт, где то стр, 
                     for i in  range(4):
                         with col[i]:
                             st.form_submit_button(use_container_width=True, label = str(candidat[i]), on_click=click_b, args=(q, otv, candidat[i]))
+                            #ChangeWidgetFontSize(str(candidat[i]), "36px")
+                    ChangeWidgetFontSizeS(candidat_str, "36px")
         else:#вопросы закончились, подводим итоги
            
             
