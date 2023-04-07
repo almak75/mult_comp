@@ -30,15 +30,15 @@ def ChangeWidgetFontSizeS(wgt_txt, wch_font_size = '12px'):
     htmlstr = """<script>var elements = window.parent.document.querySelectorAll('*'), i;
                     for (i = 0; i < elements.length; ++i) { if (USLOVIE) 
                         { elements[i].style.fontSize='""" + wch_font_size + """';} } </script>  """
-    usl = []
-    for el in wgt_txt:
-        new_if =f"(elements[i].innerText == '{el}')"
-        usl.append(new_if)
+    usl = [f"(elements[i].innerText == '{el}')" for el in wgt_txt]
+    #for el in wgt_txt:
+    #    new_if =f"(elements[i].innerText == '{el}')"
+    #    usl.append(new_if)
         
     usl = ' || '.join(usl)
     htmlstr = htmlstr.replace('USLOVIE',usl)
         
-    print(htmlstr)
+    #print(htmlstr)
     components.html(f"{htmlstr}", height=0, width=0)
 
 
@@ -141,7 +141,6 @@ else:
 #footer {visibility: hidden;}
 m = st.markdown("""
 <style>
-#MainMenu {visibility: hidden;}
 footer {visibility: hidden;}
 div.stButton > button:first-child {
     background-color: #0099ff;
@@ -462,16 +461,20 @@ else:
 
 
             if right_answer and st.session_state.stat['type'] != 'comp': #надо сообщить верный ответ
-                #placeholder_big.empty()
-                #if st.session_state.last !=1:
-                #    next_example()
+               
                 st.session_state.answer='' #тут хранится ответ на тест
                 st.session_state.q = '' #тут хранится вопрос и ПРАВИЛЬНЫЙ ответ теста  
-                st.title(f':red[Ответ неверный]')
-                st.title(f'Запомни: {last_example[0]} = {last_example[-2]}')
-                alert_mistake = 1 #чтобы не выводить пример
-                st.button('Дальше')
-                ChangeWidgetFontSizeS(['Дальше'], "36px")
+               
+
+                
+                
+                with st.form(key='qwe3'):
+                    st.title(f':red[Нет: {last_example[0]} = {last_example[-2]}]')
+                    st.write(' ')
+                    st.form_submit_button('Дальше')
+                    alert_mistake = 1
+                    ChangeWidgetFontSizeS(['Дальше'], "36px")
+
         else: #ответ верный, надо посчитать
             st.session_state.stat['good'] +=1
 
@@ -561,9 +564,12 @@ else:
                 st.title('Время прохождения: '+str( f'{t:.2f} сек.'))
             if st.session_state.stat['wrong'] !=0:
                 st.title(':blue[Запомни эти примеры:]')
-                tmp = set(st.session_state.stat['mistakes']) #так как может быть штрафной круг, то надо убрать дубли
-                for m in tmp:
-                    st.title(f'   {m}')
+                tmp = list(set(st.session_state.stat['mistakes'])) #так как может быть штрафной круг, то надо убрать дубли
+                #Сделаем красиво. в три колонки
+                col = st.columns(3)
+                for i in range(len(tmp)):
+                    with col[i%3]:
+                        st.title(f'{tmp[i]}')
             show_buttons()
             
 
