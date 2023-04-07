@@ -18,8 +18,8 @@ st.set_page_config(page_title='Таблица умножения')
 #tm = sys.path
 #sys.path = list(set(sys.path))
 try:
- import cv2
- print('Поставилось')
+    import cv2
+    print('Поставилось')
 except:
     print('не поставилось')
 
