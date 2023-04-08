@@ -23,6 +23,31 @@ ALL_MISTAKES = 'all_mistakes.txt'  #здесь будем хранить все 
 NOT_SAVE_RESULTS = ['Тестовый Тест', 'Выберите..', 'Гость'] #эти результаты не надо сохранять в рейтинги
 
 
+
+
+
+##MainMenu {visibility: hidden;}
+#footer {visibility: hidden;}
+m = st.markdown("""
+<style>
+.css-hi6a2p {padding-top: 0rem;}
+#MainMenu {visibility: hidden;}
+footer {visibility: hidden;}
+div.stButton > button:first-child {
+    background-color: #0099ff;
+    color:#ffffff;
+    height: 48px;
+    font-size: 32px;
+}
+div.stButton > button:hover {
+    background-color: #00ff00;
+    color:#ff0000;
+    height: 48px;
+    font-size: 32px;
+    }
+
+</style>""", unsafe_allow_html=True)
+
 #СУПЕР! Как менять стиль для отделььно взятого элемента
 #взято здесь https://discuss.streamlit.io/t/how-to-change-font-size-of-streamlit-radio-widget-title/35945/3
 def ChangeWidgetFontSizeS(wgt_txt, wch_font_size = '12px'):
@@ -105,7 +130,7 @@ if ('current_user' not in st.session_state) or (st.session_state.current_user=='
     pos = 0
     pupils = load_class()
     #print(st.session_state)
-    st.header('Таблица умножения. Чемпионат 2В.')
+    st.header('Таблица умножения. Чемпионат.')
     pupil2 = st.selectbox(':blue[Участник:]', pupils, index = pos, on_change=set_cookies, args =['pupil2'], key='pupil2')
     st.write('Вам только посмотреть? Выберите пользователя с именем "Гость"')
     st.stop()
@@ -135,27 +160,9 @@ if 'stat' in st.session_state and st.session_state.stat['type'] == 'comp':
 elif 'stat' in st.session_state and st.session_state.stat['type'] == 'train':
     st.header('Таблица умножения. Обучение.')
 else:
-    st.header('Таблица умножения. Чемпионат 2В.')
+    st.header('Таблица умножения. Чемпионат.')
 
-##MainMenu {visibility: hidden;}
-#footer {visibility: hidden;}
-m = st.markdown("""
-<style>
-footer {visibility: hidden;}
-div.stButton > button:first-child {
-    background-color: #0099ff;
-    color:#ffffff;
-    height: 48px;
-    font-size: 32px;
-}
-div.stButton > button:hover {
-    background-color: #00ff00;
-    color:#ff0000;
-    height: 48px;
-    font-size: 32px;
-    }
 
-</style>""", unsafe_allow_html=True)
 
 
 
@@ -557,13 +564,20 @@ else:
             
             
             #st.title('Всего примеров: '+str(st.session_state.stat['voprosov']))
-            st.title(f':green[Правильных ответов: {st.session_state.stat["voprosov"] - st.session_state.stat["wrong"]}]')
-            st.title(f':red[Ошибочных ответов: {st.session_state.stat["wrong"]}]')
+            container_results = st.container()
+            container_results.title(f':green[Правильных ответов: {st.session_state.stat["voprosov"] - st.session_state.stat["wrong"]}]')
+            if st.session_state.stat["wrong"]==0:
+                #похвалим его
+                good = ['Отлично!','Молодец!','Без ошибок!','Супер!','Поздравляю!','Так держать','Это успех'] 
+                container_results.title(f':green[{random.choice(good)}]')
+            else:
+                container_results.title(f':red[Ошибочных ответов: {st.session_state.stat["wrong"]}]')
+
             t = end_time_cek =time.time() - int(st.session_state.stat['start_time_cek'])
             if  (st.session_state.stat['type'] == 'comp'):
-                st.title('Время прохождения: '+str( f'{t:.2f} сек.'))
+                st.title('Время: '+str( f'{t:.2f} сек.'))
             if st.session_state.stat['wrong'] !=0:
-                st.title(':blue[Запомни эти примеры:]')
+                st.title(':blue[Запомни:]')
                 tmp = list(set(st.session_state.stat['mistakes'])) #так как может быть штрафной круг, то надо убрать дубли
                 #Сделаем красиво. в три колонки
                 col = st.columns(3)
@@ -618,6 +632,7 @@ else:
                     new_row = {'Правильно':RATING_N - tmp_dict['wrong'],'Ошибок':tmp_dict['wrong'],'Время (сек.)':t, 'Дата': datetime.datetime.now().strftime('%d.%m.%Y %H:%M')}
                     #rating = rating.append(pd.DataFrame(new_row, index=[pupil]))
                     rating = pd.concat([rating, pd.DataFrame(new_row, index=[pupil])])
+                
                 if re_write_file: #далее делаем только если были изменения в таблице
                     rating.sort_values(['Ошибок','Время (сек.)'],ascending=[True, True], inplace =True)
                     if "Место" in rating.columns:
@@ -640,7 +655,13 @@ else:
                             del cam
                         except:
                             pass
-                    
+
+
+                #надо получить его место в рейтинге, чтобы показать резулььтат
+                rating_place = rating.at[pupil, 'Место']
+                container_results.title(f'Место: {rating_place}')
+                        
+
                 if (not pupil in NOT_SAVE_RESULTS):    
                     with open(LOG_COMP, 'a', encoding='utf8') as handle:
                     #фио, правильно, не правильно, секунд, дата, 1 попытка
