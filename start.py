@@ -7,10 +7,10 @@ import pandas as pd
 import os
 import pickle
 import datetime
-import extra_streamlit_components as stx
+#import extra_streamlit_components as stx #это грузится, но только по необходимости. ПОчему то иногда кривой импорт
 import streamlit.components.v1 as components
 
-import cv2
+#import cv2#это перенес к фотофинишу, чтобы каждый раз не импортировать. 
 
 st.set_page_config(page_title='Таблица умножения')
 
@@ -107,13 +107,21 @@ def cls():
 #@st.cache(allow_output_mutation=True)
 #@st.cache_resource
 def get_manager():
-    return stx.CookieManager()
+    #эта хрень имеет привычку плохо импортироваться. такое ощущение, что засыпает. По этому из шапки ее убрал
+    try:
+        import extra_streamlit_components as stx
+        return stx.CookieManager()
 
+    except:
+        return None
+
+    
 if 'current_user' not in st.session_state:
     cookie_manager = get_manager()
-    remember_fio = cookie_manager.get(cookie = COOKI_NAME)
-    if remember_fio:
-        st.session_state.current_user = remember_fio
+    if cookie_manager:
+        remember_fio = cookie_manager.get(cookie = COOKI_NAME)
+        if remember_fio:
+            st.session_state.current_user = remember_fio
         #print('Вспоминаем на старте', remember_fio)
 
 
@@ -124,7 +132,8 @@ def set_cookies(key): #записываем в куки текущего юзе�
     cookie_manager = get_manager()
     #print(st.session_state[key])
     st.session_state.current_user = st.session_state[key]
-    cookie_manager.set(COOKI_NAME, st.session_state[key], expires_at=datetime.datetime(year=2023, month=7, day=7))
+    if cookie_manager:
+        cookie_manager.set(COOKI_NAME, st.session_state[key], expires_at=datetime.datetime(year=2023, month=7, day=7))
     
 if ('current_user' not in st.session_state) or (st.session_state.current_user=='Выберите..'): #
     pos = 0
@@ -644,8 +653,9 @@ else:
 
                     #ФОТОФИНИШ
                     if 'foto_finish' in st.session_state and st.session_state.foto_finish:
-                        print('фотофиниш')
+                        #print('фотофиниш')
                         try:
+                            import cv2
                             cam = cv2.VideoCapture(0)
                             ret, frame = cam.read()
                             if not os.path.isdir('arh'):
