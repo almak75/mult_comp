@@ -486,7 +486,7 @@ else:
                 
                 with st.form(key='qwe3'):
                     st.title(f':red[Нет: {last_example[0]} = {last_example[-2]}]')
-                    st.write(' ')
+                    st.write(':white[|]') #чтобы позиция кнопки сохранялась и кнопка не дергалась, 
                     st.form_submit_button('Дальше')
                     alert_mistake = 1
                     ChangeWidgetFontSizeS(['Дальше'], "36px")
