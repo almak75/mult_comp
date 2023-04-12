@@ -118,7 +118,7 @@ def get_manager():
     
 if 'current_user' not in st.session_state:
     cookie_manager = get_manager()
-    if cookie_manager:
+    if cookie_manager !=None:
         remember_fio = cookie_manager.get(cookie = COOKI_NAME)
         if remember_fio:
             st.session_state.current_user = remember_fio
@@ -132,7 +132,7 @@ def set_cookies(key): #записываем в куки текущего юзе�
     cookie_manager = get_manager()
     #print(st.session_state[key])
     st.session_state.current_user = st.session_state[key]
-    if cookie_manager:
+    if cookie_manager != None:
         cookie_manager.set(COOKI_NAME, st.session_state[key], expires_at=datetime.datetime(year=2023, month=7, day=7))
     
 if ('current_user' not in st.session_state) or (st.session_state.current_user=='Выберите..'): #
