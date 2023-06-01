@@ -107,6 +107,7 @@ def cls():
 #@st.cache(allow_output_mutation=True)
 #@st.cache_resource
 def get_manager():
+    return None#можно раскомментировать, тогда будет пытаться работать с куки и сохранять пользователя между сеансами
     #эта хрень имеет привычку плохо импортироваться. такое ощущение, что засыпает. По этому из шапки ее убрал
     try:
         import extra_streamlit_components as stx
@@ -126,6 +127,7 @@ if 'current_user' not in st.session_state:
 
 
 def set_cookies(key): #записываем в куки текущего юзера
+   
     #print(key)
     #key = key[0]
     #cookie_manager = get_manager()
