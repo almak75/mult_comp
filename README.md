@@ -28,6 +28,7 @@ http://45.141.103.180:8501/
 
 Для теста можно использовать учетную запись "Гость".
 
+[Видео-презентация](https://www.youtube.com/watch?v=AmSY6_jfc4k&t=1s)
 
 # Multiplication table for kids.
 Designed to facilitate the study of the multiplication table by younger students. It allows you to better remember, speed up the process and train for a mistake. Has 2 modes: **"Training"** mode and **"Competition"** mode
