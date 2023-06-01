@@ -23,6 +23,11 @@
 2. pip install -r requirements.txt
 3. streamlit run start.py
 
+## Попробовать
+http://45.141.103.180:8501/
+
+Для теста можно использовать учетную запись "Гость".
+
 
 # Multiplication table for younger students.
 Designed to facilitate the study of the multiplication table by younger students. It allows you to better remember, speed up the process and train for a mistake. Has 2 modes: **"Training"** mode and **"Competition"** mode
@@ -48,3 +53,6 @@ In the "Competition" mode, 30 examples are automatically generated for the entir
 1. git clone https://github.com/almak75/mult_comp.git
 2. pip install -r requirements.txt
 3. streamlit run start.py
+
+## Test
+http://45.141.103.180:8501/
