@@ -5,7 +5,7 @@
   1. указать на какое число умножаем: х1, х2, х3, х4, х5, х6, х7, х8, х9, х10.
   2. выбрать - изучаем деление/умножение/сразу обе операции/
   3. сколько примеров необходимо для тренировочной сессии [1,100]
-  4. формат ввода ответа: можно вводить числом на клавиатуре (детям не очень), а можно выбрать их 4х предложенных.
+  4. формат ввода ответа: можно вводить числом на клавиатуре (детям не очень), а можно выбрать из 4х предложенных.
   5. можно сделать так, чтобы в конце обучающей сессии, ребенку были предложены примеры в которых были ошибки.
   6. надо ли показывать правильный ответ, если дан ошибочный? этот параметр тоже можно указать. 
 
@@ -29,14 +29,14 @@ http://45.141.103.180:8501/
 Для теста можно использовать учетную запись "Гость".
 
 
-# Multiplication table for younger students.
+# Multiplication table for kids.
 Designed to facilitate the study of the multiplication table by younger students. It allows you to better remember, speed up the process and train for a mistake. Has 2 modes: **"Training"** mode and **"Competition"** mode
 
 ## The "Training" mode allows in the settings:
    1. indicate what number we multiply: x1, x2, x3, x4, x5, x6, x7, x8, x9, x10.
    2. choose - we study division / multiplication / both operations at once /
    3. how many examples are needed for a practice session [1,100]
-   4. answer input format: you can enter a number on the keyboard (not for children), or you can choose 4 of them offered.
+   4. answer input format: you can enter a number on the keyboard (not good for children), or you can choose 4 from offered.
    5. You can make sure that at the end of the training session, the child is offered examples in which there were errors.
    6. Is it necessary to show the correct answer if an erroneous one is given? this option can also be specified.
 
